@@ -1,0 +1,24 @@
+[[source]]
+name = "pypi"
+url = "https://pypi.org/simple"
+verify_ssl = true
+
+[dev-packages]
+black = "==19.3b0"
+
+[packages]
+black = "*"
+hhtpie = "*"
+ipython = "*"
+pudb = "*"
+pylint = "*"
+flake8 = "*"
+pytest = "*"
+aiohhtp = {extras = ["speedups"],version = "*"}
+beautifulsoup4 = "*"
+requests = "*"
+dynaconf = {extras = ["yaml"],version = "*"}
+selenium = "*"
+
+[requires]
+python_version = "3.7"
