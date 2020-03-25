@@ -1,0 +1,12 @@
+default:
+  SKIDON_API_TOKEN: null
+  SKIDON_API_URL: "https://skidon.herokuapp.com/api/v1"
+  DEBUG: false
+  FULL_LOAD: false
+
+development:
+  SKIDON_API_URL: "http://localhost:8000/api/v1"
+  DEBUG: true
+
+production:
+  DEBUG: false
