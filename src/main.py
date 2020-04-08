@@ -1,5 +1,9 @@
+from typing import Optional
+
 from selenium import webdriver
+import re
 import requests
+
 from selenium.common.exceptions import NoSuchElementException
 from selenium.webdriver.chrome.options import Options
 from webdriver_manager.chrome import ChromeDriverManager
@@ -79,7 +83,7 @@ def extract_kfc():
 
 
 def extract_evroopt():
-    url = "https://evroopt.by/redprice/vse-tovary/"
+    url = "https://evroopt.by/redprice/vse-tovary-smm/"
     driver.get(url)
 
     image_list = []
@@ -195,7 +199,8 @@ def extract_korona():
         text_list.append(text_src)
 
         name_of_discount = driver.find_element_by_tag_name("article")
-        name_of_discount_src = name_of_discount.get_attribute("innerText")
+        price=name_of_discount.find_element_by_tag_name("tr")
+        name_of_discount_src = price.get_attribute("innerText")
         name_of_discount_list.append(name_of_discount_src)
 
         image_src_list = driver.find_element_by_class_name("text-guide")
@@ -217,8 +222,31 @@ def extract_korona():
         )
         print(response.status_code)
 
+def extract_gippo():
+    url = "https://gippo.by/clients/specoffers/"
+    driver.get(url)
 
-extract_kfc()
-extract_evroopt()
-extract_vitalur()
-extract_korona()
+    image_list = []
+
+    elements_src=driver.find_element_by_class_name("caroufredsel_wrapper")
+    elements=elements_src.find_elements_by_class_name("slide")
+
+    for element in elements:
+        image= element.find_element_by_class_name("pic")
+        image_src=image.get_attribute("src")
+        image_list.append(image_src)
+
+    for image_list in zip(image_list):
+        response = requests.post(
+            "http://skidon.herokuapp.com/api/v1/discount/",
+            data={
+                "media": image_list,
+                "shop": "Gippo",
+                "text": image_list,
+            },
+        )
+        print(response.status_code)
+
+
+
+extract_gippo()
