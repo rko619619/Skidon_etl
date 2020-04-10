@@ -8,9 +8,9 @@ from selenium.common.exceptions import NoSuchElementException
 from selenium.webdriver.chrome.options import Options
 from webdriver_manager.chrome import ChromeDriverManager
 
-chrome_options = Options()
-chrome_options.add_argument("--headless")
-driver = webdriver.Chrome(ChromeDriverManager().install(), options=chrome_options)
+#chrome_options = Options()
+#chrome_options.add_argument("--headless")
+driver = webdriver.Chrome(ChromeDriverManager().install())#, options=chrome_options)
 
 
 def extract_kfc():
@@ -247,6 +247,76 @@ def extract_gippo():
         )
         print(response.status_code)
 
+def extract_bigz():
+    url = "https://hitdiscount.by/flyer/"
+    driver.get(url)
+
+    image_list=[]
+
+    elements=driver.find_elements_by_tag_name("figure")
+    for element in elements:
+        image=element.find_element_by_tag_name("img")
+        image_src=image.get_attribute("src")
+        image_list.append(image_src)
+
+    for image_list in zip(image_list):
+        response = requests.post(
+            "http://skidon.herokuapp.com/api/v1/discount/",
+            data={
+                "media": image_list,
+                "shop": "Hit",
+                "text": image_list,
+            },
+        )
+        print(response.status_code)
+
+def extract_koko_post():
+    url = "https://koko.by/post"
+    driver.get(url)
+
+    href_list=[]
+
+    elements = driver.find_elements_by_class_name("elementor-post__card")
+    for element in elements:
+        href = element.find_element_by_class_name("elementor-post__thumbnail__link")
+        href_src = href.get_attribute("href")
+        href_list.append(href_src)
+
+    while True:
+        try:
+            next=driver.find_element_by_class_name("elementor-pagination")
+            next_src=next.find_element_by_class_name("page-numbers.next")
+            next_src.click()
+            elements=driver.find_elements_by_class_name("elementor-post__card")
+            for element in elements:
+                href=element.find_element_by_class_name("elementor-post__thumbnail__link")
+                href_src=href.get_attribute("href")
+                href_list.append(href_src)
+        except Exception:
+            continue
 
 
-extract_gippo()
+
+
+
+
+
+
+
+    # for image_list in zip(image_list):
+    #     response = requests.post(
+    #         "http://skidon.herokuapp.com/api/v1/discount/",
+    #         data={
+    #             "media": image_list,
+    #             "shop": "Hit",
+    #             "text": image_list,
+    #         },
+    #     )
+    #     print(response.status_code)
+
+
+
+
+
+
+extract_koko_post()
